@@ -1,0 +1,18 @@
+.{
+    .name = "lexbor",
+    .version = "0.0.0",
+    .dependencies = .{
+        .lexbor = .{
+            .path = "source",
+        },
+        .examples = .{
+            .path = "examples",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "source",
+        "examples",
+    },
+}

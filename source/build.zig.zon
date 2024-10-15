@@ -1,0 +1,5 @@
+.{
+    .name = "lexbor",
+    .version = "0.0.0",
+    .paths = .{""},
+}
