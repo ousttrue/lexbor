@@ -15,7 +15,15 @@ pub fn build(b: *std.Build) void {
 
     for (examples_build.examples) |example| {
         const artifact = examples_dep.artifact(example.name);
-        b.installArtifact(artifact);
+        const install = b.addInstallArtifact(artifact, .{});
+        b.getInstallStep().dependOn(&install.step);
+
+        const run = b.addRunArtifact(artifact);
+        run.step.dependOn(&install.step);
+        b.step(
+            b.fmt("run-{s}", .{example.name}),
+            b.fmt("Run {s}", .{example.name}),
+        ).dependOn(&run.step);
 
         targets.append(artifact) catch @panic("OOM");
     }
