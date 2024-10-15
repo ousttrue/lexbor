@@ -10,21 +10,35 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    const exe = b.addExecutable(.{
-        .target = target,
-        .optimize = optimize,
+    for (examples) |example| {
+        const exe = b.addExecutable(.{
+            .target = target,
+            .optimize = optimize,
+            .name = example.name,
+            .link_libc = true,
+        });
+        exe.entry = .disabled;
+        exe.addCSourceFiles(.{
+            .files = example.files,
+            .flags = &lexbor_build.flags,
+        });
+        exe.addIncludePath(lexbor_dep.path(""));
+        exe.linkLibrary(lexbor_dep.artifact("lexbor"));
+
+        b.installArtifact(exe);
+    }
+}
+
+pub const Example = struct {
+    name: []const u8,
+    files: []const []const u8,
+};
+
+pub const examples = [_]Example{
+    .{
         .name = "html_parse",
-        .link_libc = true,
-    });
-    exe.entry = .disabled;
-    exe.addCSourceFiles(.{
         .files = &.{
             "lexbor/html/parse.c",
         },
-        .flags = &lexbor_build.flags,
-    });
-    exe.addIncludePath(lexbor_dep.path(""));
-    exe.linkLibrary(lexbor_dep.artifact("lexbor"));
-
-    b.installArtifact(exe);
-}
+    },
+};
